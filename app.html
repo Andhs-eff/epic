@@ -44,7 +44,7 @@
       console.log("Response upper", response)
 
 
-      var loincs = [ encodeURIComponent("http://loinc.org|4544-3"),encodeURIComponent("http://loinc.org|444-1") ] //4544-3 = hematocrit
+      var loincs = [ encodeURIComponent("http://loinc.org|4548-4")] //,encodeURIComponent("http://loinc.org|4544-3"),encodeURIComponent("http://loinc.org|444-1") ] //4544-3 = hematocrit
       var obs = await fetch(myApp.smart.state.serverUrl+"/Observation?patient="+myApp.smart.patient.id+"&limit=50&code="+loincs.join(","),{
         headers:{  
           "Accept":"application/json+fhir",
