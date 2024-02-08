@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<script src='dist/fhir-client.js'>
+	</script>
+</head>
+
+<body>
+	<p>Hello, I am the page "launch.html"</p>
+
+	<script>
+		FHIR.oauth2.authorize({
+      'client_id': '87168b8c-9ce6-4b6e-bc61-ce4a8002a8ab',//r4
+      //'scope':  'launch Patient.read Observation.read Observation.search ServiceRequest.read ServiceRequest.search openid profile',
+	  'scope':  'Patient.read Observation.read Observation.search ServiceRequest.read ServiceRequest.search',
+      'redirect_uri': 'http://127.0.0.1:5500/app.html'
+    });
+	</script>
+
+</body>
+
+</html>
