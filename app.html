@@ -142,7 +142,8 @@
         body: JSON.stringify(json), 
         headers: {
           "Accept": "application/json+fhir",
-          "Authorization": "Bearer " + myApp.smart.state.tokenResponse.access_token
+          "Authorization": "Bearer " + myApp.smart.state.tokenResponse.access_token,
+          'Content-Type': 'application/json+fhir;charset=utf-8'
         }
       }).then(function (data) {
         return data
