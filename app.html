@@ -15,12 +15,11 @@
 <body>
 
   <div id="main">
-    <p v-for="item in $data.entry" v-html="item.resource.resourceType">
+    <p v-for="x in Object.entries($data)" v-html="Object.keys(x[1])[0]+': '+ x[1][Object.keys(x[1])[0]]">
     </p>
   </div>
 
 	<script>
-
 		var myApp = {}
 
     FHIR.oauth2.ready()
@@ -41,8 +40,9 @@
       })
 
       var response = await obs2.json()
-      console.log("Response upper", response)
+      console.log(response)
 
+      const sample = [{"Name": response.name[0].text}, {"Gender": response.gender}, {"Birth date": response.birthDate}, {"Preferred language": response.communication[0].language.text}]
 
       var loincs = [ encodeURIComponent("http://loinc.org|4548-4")] //,encodeURIComponent("http://loinc.org|4544-3"),encodeURIComponent("http://loinc.org|444-1") ] //4544-3 = hematocrit
       var obs = await fetch(myApp.smart.state.serverUrl+"/Observation?patient="+myApp.smart.patient.id+"&limit=50&code="+loincs.join(","),{
@@ -55,11 +55,13 @@
       })
 
       var response = await obs.json()
-      console.log("Response lower", response)
+      console.log(response)
+
+      sample.push({"Analysis result": response.entry[0].valueQuantity.value}, {"Analysis result": response.entry[0].resource.valueQuantity.value});
 
       myApp.vue = new Vue({
         el:"#main",
-        data: response
+        data: sample
       })
 
 
