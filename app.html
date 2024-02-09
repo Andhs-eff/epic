@@ -32,6 +32,7 @@
         myApp.smart = client
         doRequests()
         doWrite()
+        doWrite1()
       })
 
     async function doRequests() {
@@ -102,9 +103,52 @@
         "subject": { "reference": "Patient/" + "12345" }
       };
 
-      var obs3 = await smart.api.create({resource: json})
+      var obs3 = await myApp.smart.api.create({ resource: json })
 
       var response = await obs3.json()
+      console.log(response)
+    }
+
+    async function doWrite1() {
+
+      var json = {
+        "resourceType": "Observation",
+        "text": {
+          "status": "generated",
+          "div": '<div xmlns=\"http://www.w3.org/1999/xhtml\">' + "80" + ' kg</div>'
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "3141-9",
+              "display": "weight"
+            }
+          ]
+        },
+        "appliesDateTime": new Date(),
+        "valueQuantity": {
+          "value": "80",
+          "units": "kg",
+          "system": "http://unitsofmeasure.org/",
+          "code": "kg"
+        },
+        "reliability": "ok",
+        "subject": { "reference": "Patient/" + "67890" }
+      };
+
+      var obs4 = await fetch(myApp.smart.state.serverUrl + "/Observation", { 
+        method: 'POST', 
+        body: JSON.stringify(json), 
+        headers: {
+          "Accept": "application/json+fhir",
+          "Authorization": "Bearer " + myApp.smart.state.tokenResponse.access_token
+        }
+      }).then(function (data) {
+        return data
+      })
+
+      var response = await obs4.json()
       console.log(response)
     }
   </script>
