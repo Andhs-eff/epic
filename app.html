@@ -31,7 +31,7 @@
       .then(function (client) {
         myApp.smart = client
         doRequests()
-        doWrite(smart)
+        doWrite(client)
         doWrite1()
       })
 
@@ -75,13 +75,13 @@
 
     }
 
-    async function doWrite(smart) {
+    async function doWrite(client) {
 
       var json = {
         "resourceType": "Observation",
         "text": {
           "status": "generated",
-          "div": '<div xmlns=\"http://www.w3.org/1999/xhtml\">' + "90" + ' kg</div>'
+          "div": '<div xmlns=\"http://www.w3.org/1999/xhtml\">' + "80" + ' kg</div>'
         },
         "code": {
           "coding": [
@@ -92,18 +92,17 @@
             }
           ]
         },
-        "appliesDateTime": new Date(),
+        "appliesDateTime": "2024-02-09T00:00:00Z",
         "valueQuantity": {
-          "value": "90",
-          "units": "kg",
+          "value": "80",
+          "unit": "kg",
           "system": "http://unitsofmeasure.org/",
           "code": "kg"
         },
-        "reliability": "ok",
-        "subject": { "reference": "Patient/" + 'erXuFYUfucBZaryVksYEcMg3'}
+        "subject": { "reference": "Patient/" + 'erXuFYUfucBZaryVksYEcMg3' }
       };
 
-      var obs3 = await smart.api.create({ resource: json })
+      var obs3 = await client.api.create({ resource: json })
 
       var response = await obs3.json()
       console.log(response)
@@ -147,7 +146,7 @@
       }).then(function (data) {
         return data
       })
-
+      console.log(obs4)
       var response = await obs4.json()
       console.log(response)
     }
