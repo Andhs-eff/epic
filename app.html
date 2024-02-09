@@ -31,7 +31,7 @@
       .then(function (client) {
         myApp.smart = client
         doRequests()
-        doWrite()
+        doWrite(client)
         doWrite1()
       })
 
@@ -75,7 +75,7 @@
 
     }
 
-    async function doWrite() {
+    async function doWrite(client) {
 
       var json = {
         "resourceType": "Observation",
@@ -100,10 +100,10 @@
           "code": "kg"
         },
         "reliability": "ok",
-        "subject": { "reference": "Patient/" + "12345" }
+        "subject": { "reference": "Patient/" + 'erXuFYUfucBZaryVksYEcMg3'}
       };
 
-      var obs3 = await myApp.smart.api.create({ resource: json })
+      var obs3 = await client.api.create({ resource: json })
 
       var response = await obs3.json()
       console.log(response)
@@ -134,7 +134,7 @@
           "code": "kg"
         },
         "reliability": "ok",
-        "subject": { "reference": "Patient/" + "67890" }
+        "subject": { "reference": "Patient/" + 'erXuFYUfucBZaryVksYEcMg3' }
       };
 
       var obs4 = await fetch(myApp.smart.state.serverUrl + "/Observation", { 
