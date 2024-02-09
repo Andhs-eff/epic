@@ -3,12 +3,17 @@
 
 <head>
 
-	<script src='dist/fhir-client.js'></script>
-	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src='dist/fhir-client.js'></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
   <style>
-    p{background:lightgray; margin:1em; padding:1em; font-size: x-large;}
+    p {
+      background: lightgray;
+      margin: 1em;
+      padding: 1em;
+      font-size: x-large;
+    }
   </style>
 </head>
 
@@ -19,55 +24,90 @@
     </p>
   </div>
 
-	<script>
-		var myApp = {}
+  <script>
+    var myApp = {}
 
     FHIR.oauth2.ready()
-    .then(function(client){ 
-      myApp.smart = client
-      doRequests()
-    })
+      .then(function (client) {
+        myApp.smart = client
+        doRequests()
+        doWrite()
+      })
 
-    async function doRequests(){
+    async function doRequests() {
 
-      var obs2 = await fetch(myApp.smart.state.serverUrl+"/Patient/"+myApp.smart.patient.id,{
-        headers:{  
-          "Accept":"application/json+fhir",
-          "Authorization":"Bearer "+myApp.smart.state.tokenResponse.access_token
+      var obs2 = await fetch(myApp.smart.state.serverUrl + "/Patient/" + myApp.smart.patient.id, {
+        headers: {
+          "Accept": "application/json+fhir",
+          "Authorization": "Bearer " + myApp.smart.state.tokenResponse.access_token
         }
-        }).then(function(data){
-          return data
+      }).then(function (data) {
+        return data
       })
 
       var response = await obs2.json()
       console.log(response)
 
-      const sample = [{"Name": response.name[0].text}, {"Gender": response.gender}, {"Birth date": response.birthDate}, {"Preferred language": response.communication[0].language.text}]
+      const sample = [{ "Name": response.name[0].text }, { "Gender": response.gender }, { "Birth date": response.birthDate }, { "Preferred language": response.communication[0].language.text }]
 
-      var loincs = [ encodeURIComponent("http://loinc.org|4548-4")] //,encodeURIComponent("http://loinc.org|4544-3"),encodeURIComponent("http://loinc.org|444-1") ] //4544-3 = hematocrit
-      var obs = await fetch(myApp.smart.state.serverUrl+"/Observation?patient="+myApp.smart.patient.id+"&limit=50&code="+loincs.join(","),{
-        headers:{  
-          "Accept":"application/json+fhir",
-          "Authorization":"Bearer "+myApp.smart.state.tokenResponse.access_token
+      var loincs = [encodeURIComponent("http://loinc.org|4548-4")] //,encodeURIComponent("http://loinc.org|4544-3"),encodeURIComponent("http://loinc.org|444-1") ] //4544-3 = hematocrit
+      var obs = await fetch(myApp.smart.state.serverUrl + "/Observation?patient=" + myApp.smart.patient.id + "&limit=50&code=" + loincs.join(","), {
+        headers: {
+          "Accept": "application/json+fhir",
+          "Authorization": "Bearer " + myApp.smart.state.tokenResponse.access_token
         }
-        }).then(function(data){
-          return data
+      }).then(function (data) {
+        return data
       })
 
       var response = await obs.json()
       console.log(response)
 
-      sample.push({"Analysis result": response.entry[0].resource.valueQuantity.value});
+      sample.push({ "Analysis result": response.entry[0].resource.valueQuantity.value });
 
       myApp.vue = new Vue({
-        el:"#main",
+        el: "#main",
         data: sample
       })
 
 
 
     }
-	</script>
+
+    async function doWrite() {
+
+      var json = {
+        "resourceType": "Observation",
+        "text": {
+          "status": "generated",
+          "div": '<div xmlns=\"http://www.w3.org/1999/xhtml\">' + "90" + ' kg</div>'
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "3141-9",
+              "display": "weight"
+            }
+          ]
+        },
+        "appliesDateTime": new Date(),
+        "valueQuantity": {
+          "value": "90",
+          "units": "kg",
+          "system": "http://unitsofmeasure.org/",
+          "code": "kg"
+        },
+        "reliability": "ok",
+        "subject": { "reference": "Patient/" + "12345" }
+      };
+
+      var obs3 = await smart.api.create({resource: json})
+
+      var response = await obs3.json()
+      console.log(response)
+    }
+  </script>
 
 </body>
 
