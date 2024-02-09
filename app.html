@@ -57,7 +57,7 @@
       var response = await obs.json()
       console.log(response)
 
-      sample.push({"Analysis result": response.entry[0].valueQuantity.value});
+      sample.push({"Analysis result": response.entry[0].resource.valueQuantity.value});
 
       myApp.vue = new Vue({
         el:"#main",
