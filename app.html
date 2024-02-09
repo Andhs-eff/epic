@@ -112,32 +112,31 @@
 
       var json = {
         "resourceType": "Observation",
-        "text": {
-          "status": "generated",
-          "div": '<div xmlns=\"http://www.w3.org/1999/xhtml\">' + "80" + ' kg</div>'
-        },
+        "status": "final",
         "code": {
           "coding": [
             {
               "system": "http://loinc.org",
               "code": "3141-9",
-              "display": "weight"
+              "display": "Body weight Measured"
             }
           ]
         },
+        "subject": {
+          "reference": "Patient/erXuFYUfucBZaryVksYEcMg3"
+        },
         "effectiveDateTime": "2024-02-09T00:00:00Z",
         "valueQuantity": {
-          "value": "80",
+          "value": 80,
           "unit": "kg",
-          "system": "http://unitsofmeasure.org/",
+          "system": "http://unitsofmeasure.org",
           "code": "kg"
-        },
-        "subject": { "reference": "Patient/" + 'erXuFYUfucBZaryVksYEcMg3' }
+        }
       };
 
-      var obs4 = await fetch(myApp.smart.state.serverUrl + "/Observation", { 
-        method: 'POST', 
-        body: JSON.stringify(json), 
+      var obs4 = await fetch(myApp.smart.state.serverUrl + "/Observation", {
+        method: 'POST',
+        body: JSON.stringify(json),
         headers: {
           "Accept": "application/json+fhir",
           "Authorization": "Bearer " + myApp.smart.state.tokenResponse.access_token,
