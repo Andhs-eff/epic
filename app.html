@@ -1,156 +1,77 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-
-  <script src='dist/fhir-client.js'></script>
-  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-
-  <style>
-    p {
-      background: lightgray;
-      margin: 1em;
-      padding: 1em;
-      font-size: x-large;
-    }
-  </style>
-</head>
-
-<body>
-
-  <div id="main">
-    <p v-for="x in Object.entries($data)" v-html="Object.keys(x[1])[0]+': '+ x[1][Object.keys(x[1])[0]]">
-    </p>
-  </div>
-
-  <script>
-    var myApp = {}
-
-    FHIR.oauth2.ready()
-      .then(function (client) {
-        myApp.smart = client
-        doRequests()
-        doWrite(client)
-        doWrite1()
-      })
-
-    async function doRequests() {
-
-      var obs2 = await fetch(myApp.smart.state.serverUrl + "/Patient/" + myApp.smart.patient.id, {
-        headers: {
-          "Accept": "application/json+fhir",
-          "Authorization": "Bearer " + myApp.smart.state.tokenResponse.access_token
+ <head>
+    <script src='dist/fhir-client.js'></script>
+    <style>
+        pre {
+            margin: 0;
         }
-      }).then(function (data) {
-        return data
-      })
+    </style>
+ </head>
+ <body>
+    <pre></pre>
+    <script type="text/javascript">
+    (function () {
+        "use strict";
 
-      var response = await obs2.json()
-      console.log(response)
+        FHIR.oauth2.ready(function(smart){
+            var resource = {
+                "resourceType": "Patient",
+                "text": {
+                    "status": "generated",
+                    "div": "<div><p>Test Patient</p></div>"
+                },
+                "identifier": [
+                    {
+                        "use": "usual",
+                        "type": {
+                            "coding": [
+                                {
+                                    "system": "http://hl7.org/fhir/v2/0203",
+                                    "code": "MR",
+                                    "display": "Medical record number"
+                                }
+                            ],
+                            "text": "Medical record number"
+                        },
+                        "system": "http://hospital.smarthealthit.org",
+                        "value": "12345"
+                    }
+                ],
+                "active": false,
+                "name": [
+                    {
+                        "use": "official",
+                        "family": [
+                            "Patient"
+                        ],
+                        "given": [
+                            "Test"
+                        ]
+                    }
+                ],
+                "gender": "female",
+                "birthDate": "2007-03-20",
+            };
 
-      const sample = [{ "Name": response.name[0].text }, { "Gender": response.gender }, { "Birth date": response.birthDate }, { "Preferred language": response.communication[0].language.text }]
+            // Create the patient and then update its active flag to "true"
+            smart.api.create({resource: resource}).done(function(r) {
 
-      var loincs = [encodeURIComponent("http://loinc.org|4548-4")] //,encodeURIComponent("http://loinc.org|4544-3"),encodeURIComponent("http://loinc.org|444-1") ] //4544-3 = hematocrit
-      var obs = await fetch(myApp.smart.state.serverUrl + "/Observation?patient=" + myApp.smart.patient.id + "&limit=50&code=" + loincs.join(","), {
-        headers: {
-          "Accept": "application/json+fhir",
-          "Authorization": "Bearer " + myApp.smart.state.tokenResponse.access_token
-        }
-      }).then(function (data) {
-        return data
-      })
+                // NOTE that the patient will now have new "id" assigned by the
+                // server. The next request will be PUT (update) and that id will
+                // be required...
+                var patient = r.data;
+                patient["active"] = true;
+                smart.api.update({resource: patient}).done(function(r) {
+                    var out = JSON.stringify(r.data, null, "   ");
+                    document.getElementsByTagName("pre")[0].innerText = "Now " +
+                      "we have the following patient in the FHIR server:\n\n" +
+                      out;
+                });
+            });
+        });
 
-      var response = await obs.json()
-      console.log(response)
-
-      sample.push({ "Analysis result": response.entry[0].resource.valueQuantity.value });
-
-      myApp.vue = new Vue({
-        el: "#main",
-        data: sample
-      })
-
-
-
-    }
-
-    async function doWrite(client) {
-
-      var json = {
-        "resourceType": "Observation",
-        "text": {
-          "status": "generated",
-          "div": '<div xmlns=\"http://www.w3.org/1999/xhtml\">' + "80" + ' kg</div>'
-        },
-        "code": {
-          "coding": [
-            {
-              "system": "http://loinc.org",
-              "code": "3141-9",
-              "display": "weight"
-            }
-          ]
-        },
-        "effectiveDateTime": "2024-02-09T00:00:00Z",
-        "valueQuantity": {
-          "value": "80",
-          "unit": "kg",
-          "system": "http://unitsofmeasure.org/",
-          "code": "kg"
-        },
-        "subject": { "reference": "Patient/" + 'erXuFYUfucBZaryVksYEcMg3' }
-      };
-
-      var obs3 = await client.api.create({ resource: json })
-
-      var response = await obs3.json()
-      console.log(response)
-    }
-
-    async function doWrite1() {
-
-      var json = {
-        "resourceType": "Observation",
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "http://loinc.org",
-              "code": "3141-9",
-              "display": "Body weight Measured"
-            }
-          ]
-        },
-        "subject": {
-          "reference": "Patient/erXuFYUfucBZaryVksYEcMg3"
-        },
-        "effectiveDateTime": "2024-02-09T00:00:00Z",
-        "valueQuantity": {
-          "value": 80,
-          "unit": "kg",
-          "system": "http://unitsofmeasure.org",
-          "code": "kg"
-        }
-      };
-
-      var obs4 = await fetch(myApp.smart.state.serverUrl + "/Observation", {
-        method: 'POST',
-        body: JSON.stringify(json),
-        headers: {
-          "Accept": "application/json+fhir",
-          "Authorization": "Bearer " + myApp.smart.state.tokenResponse.access_token,
-          'Content-Type': 'application/json+fhir;charset=utf-8'
-        }
-      }).then(function (data) {
-        return data
-      })
-      console.log(obs4)
-      var response = await obs4.json()
-      console.log(response)
-    }
-  </script>
-
-</body>
-
+    }());
+    </script>
+ </body>
 </html>
