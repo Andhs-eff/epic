@@ -37,7 +37,7 @@
 
     async function doRequests() {
 
-      var obs2 = await fetch(myApp.smart.state.serverUrl + "/Patient/" + myApp.smart.patient.id, {
+      var obs2 = await fetch(myApp.smart.state.serverUrl + "/Patient/" + "erXuFYUfucBZaryVksYEcMg3", {
         headers: {
           "Accept": "application/json+fhir",
           "Authorization": "Bearer " + myApp.smart.state.tokenResponse.access_token
@@ -52,7 +52,7 @@
       const sample = [{ "Name": response.name[0].text }, { "Gender": response.gender }, { "Birth date": response.birthDate }, { "Preferred language": response.communication[0].language.text }]
 
       var loincs = [encodeURIComponent("http://loinc.org|4548-4")] //,encodeURIComponent("http://loinc.org|4544-3"),encodeURIComponent("http://loinc.org|444-1") ] //4544-3 = hematocrit
-      var obs = await fetch(myApp.smart.state.serverUrl + "/Observation?patient=" + myApp.smart.patient.id + "&limit=50&code=" + loincs.join(","), {
+      var obs = await fetch(myApp.smart.state.serverUrl + "/Observation?patient=" + "erXuFYUfucBZaryVksYEcMg3" + "&limit=50&code=" + loincs.join(","), {
         headers: {
           "Accept": "application/json+fhir",
           "Authorization": "Bearer " + myApp.smart.state.tokenResponse.access_token
