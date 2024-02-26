@@ -14,6 +14,10 @@
       padding: 1em;
       font-size: x-large;
     }
+
+    #write {
+      background: lightgreen;
+    }
   </style>
 </head>
 
@@ -22,6 +26,7 @@
   <div id="main">
     <p v-for="x in Object.entries($data)" v-html="Object.keys(x[1])[0]+': '+ x[1][Object.keys(x[1])[0]]">
     </p>
+    <p id="write"></p>
   </div>
 
   <script>
@@ -85,10 +90,6 @@
         //doWrite(client)
         doWrite1()
 
-        myApp.vue = new Vue({
-        el: "#main",
-        data: sample
-        });
       });
 
     async function doRequests() {
@@ -122,17 +123,20 @@
 
       sample.push({ "Analysis result": response.entry[0].resource.valueQuantity.value });
 
-
+      myApp.vue = new Vue({
+        el: "#main",
+        data: sample
+        });
     }
 
-    async function doWrite(client) {
+/*     async function doWrite(client) {
 
       var obs3 = await client.create({ resource: json })
 
       console.log("3", obs3);
       //var response = await obs3.json();
       //console.log("3", response);
-    }
+    } */
 
     async function doWrite1() {
 
@@ -151,7 +155,7 @@
       //var response = await obs4.json();
       //console.log("4", response);
 
-      sample.push({ "Record creation success": "Interprteter name and Call duration wrote to database" });
+      $('#write').text("Record creation success: Interprteter name and Call duration wrote to database");
     }
   </script>
 
