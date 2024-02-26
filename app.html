@@ -84,7 +84,12 @@
         doRequests()
         //doWrite(client)
         doWrite1()
-      })
+
+        myApp.vue = new Vue({
+        el: "#main",
+        data: sample
+        });
+      });
 
     async function doRequests() {
 
@@ -98,7 +103,7 @@
       })
 
       var response = await obs2.json()
-      console.log("2", response)
+      console.log("1", response)
 
       const sample = [{ "Name": response.name[0].text }, { "Gender": response.gender }, { "Birth date": response.birthDate }, { "Preferred language": response.communication[0].language.text }]
 
@@ -113,15 +118,9 @@
       })
 
       var response = await obs.json()
-      console.log("1", response)
+      console.log("2", response)
 
       sample.push({ "Analysis result": response.entry[0].resource.valueQuantity.value });
-
-      myApp.vue = new Vue({
-        el: "#main",
-        data: sample
-      })
-
 
 
     }
@@ -151,6 +150,8 @@
       console.log("4", obs4);
       //var response = await obs4.json();
       //console.log("4", response);
+
+      sample.push({ "Record creation success": "Interprteter name and Call duration wrote to database" });
     }
   </script>
 
