@@ -2,14 +2,23 @@
 <html>
 
 <head>
-
+	<script src='dist/fhir-client.js'>
+	</script>
 </head>
 
 <body>
-  <a href="launch.html?iss=https://fhir.epic.com/interconnect-fhir-oauth/api/FHIR/R4&aud=">If you are a clinician, login
-    here!</a>
-  <br>
+	<p>Waiting for authorization...</p>
 
+	<script>
+		FHIR.oauth2.authorize({
+      'client_id': '87168b8c-9ce6-4b6e-bc61-ce4a8002a8ab',//r4
+      'scope':  'launch Patient.read Observation.read Observation.search Observation.create ServiceRequest.read ServiceRequest.search openid profile',
+	  'iss': 'https://fhir.epic.com/interconnect-fhir-oauth/api/FHIR/R4',
+      'launch': 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ1cm46b2lkOmZoaXIiLCJjbGllbnRfaWQiOiI4NzE2OGI4Yy05Y2U2LTRiNmUtYmM2MS1jZTRhODAwMmE4YWIiLCJlcGljLmVjaSI6InVybjplcGljOk9wZW4uRXBpYy1jdXJyZW50IiwiZXBpYy5tZXRhZGF0YSI6IkRHRTdJSWM0NmxXZVk2YnVJZjhwT1U0a2hhelRLMDBnbFVFck9naFFxMGVqQ0pzU3ktcWZualZMTjBQQVRmZ1RUcFJSVlFxWDhBc3NzOVhzZWp5cTh1bEg1NWtqU1I5NkhmTUZlMWtmLVVnMEQtYkFkeEI4YUMzVUxEWDdtbGxBIiwiZXBpYy50b2tlbnR5cGUiOiJsYXVuY2giLCJleHAiOjE3MDk1NTUyMTYsImlhdCI6MTcwOTU1NDkxNiwiaXNzIjoidXJuOm9pZDpmaGlyIiwianRpIjoiMDBjNTg0M2YtOWMzOC00ZjQwLTlmYjItZjFkOGRhN2ZkYjZjIiwibmJmIjoxNzA5NTU0OTE2LCJzdWIiOiJldk5wLUtoWXdPT3FBWm4xcFoyZW51QTMifQ.Rk_SZrJYw33I3m-eg4AdPsR62J83VgwjW1HyYn5qC8io-Khkltp_tRc-OHRLJ9Vxlmjv_Py9L3ugDB3_uuLnkuFIWLGuM4BTZUR8QgjYkAqUzNwB2XZOBDsmX44vDnkPJeDtbrTNQWnX-TJqoxSaVcs6Z5sNcP0lXqR6JZGpGyfSaL4fQurxGPL7bXdiZKhZSprsh6AnSIi5DHqNYGkK7I96V2Ye40M1COue8qOOMNcrMbYgzijkxQraKEoyOk4a7pfFEGQs6_IcN1fdBaaKzF5xFP3bMO5aEAhSMvroy7_dsFVneC9BAfd1SaKK63UZBktJl2Qhhzv6eRhoOjoHFQ',
+	  //'scope':  'Patient.read Observation.read Observation.search ServiceRequest.read ServiceRequest.search',
+      'redirect_uri': 'https://andhs-eff.github.io/epic/app.html'
+    });
+	</script>
 
 </body>
 
